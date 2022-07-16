@@ -6,8 +6,10 @@ class BookmarksController < ApplicationController
   end
 
   def create
-    @bookmark = Bookmark.new(bookmark_params)
-    @bookmark.list = @list
+    # here we have to grab params from our form and add the movie_id to our bookmark
+    # @movie = Movie.find(params[:list][:movie]) --> raise to find out where to find all data needed
+    @bookmark = Bookmark.new(list: @list, movie: @movie)
+    # @bookmark.list = @list
     @bookmark.save
     redirect_to list_path(@list)
   end
