@@ -1,26 +1,37 @@
 class BookmarksController < ApplicationController
-  before_action :find_list
+  before_action :set_list, only: [:new, :create]
+  before_action :set_bookmark, only: :destroy
 
   def new
     @bookmark = Bookmark.new
   end
 
   def create
-    # here we have to grab params from our form and add the movie_id to our bookmark
-    # @movie = Movie.find(params[:list][:movie]) --> raise to find out where to find all data needed
-    @bookmark = Bookmark.new(list: @list, movie: @movie)
-    # @bookmark.list = @list
-    @bookmark.save
-    redirect_to list_path(@list)
+    @bookmark = Bookmark.new(bookmark_params)
+    @bookmark.list = @list
+    if @bookmark.save
+      redirect_to list_path(@list)
+    else
+      render :new
+    end
+  end
+
+  def destroy
+    @bookmark.destroy
+    redirect_to list_path(@bookmark.list)
   end
 
   private
 
-  def find_list
-    @list = List.find(params[:list_id])
-  end
-
   def bookmark_params
     params.require(:bookmark).permit(:comment)
+  end
+
+  def set_bookmarks
+    @bookmark + Bookmark.find(params[:id])
+  end
+
+  def set_list
+    @list = List.find(params[:list_id])
   end
 end
